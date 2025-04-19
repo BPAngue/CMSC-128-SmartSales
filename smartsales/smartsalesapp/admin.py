@@ -1,5 +1,15 @@
 from django.contrib import admin
-from .models import TodoItem
+from django.contrib.auth.admin import UserAdmin
+from .models import CustomUser
 
 # Register your models here.
-admin.site.register(TodoItem)
+
+class CustomUserAdmin(UserAdmin):
+    fieldsets = UserAdmin.fieldsets + (
+        (None, {'fields': ('business_name',)}),
+    )
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        (None, {'fields': ('business_name',)}),
+    )
+
+admin.site.register(CustomUser, CustomUserAdmin)
