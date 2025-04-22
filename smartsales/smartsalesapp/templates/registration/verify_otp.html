@@ -24,8 +24,8 @@
     </div>
 
     <div class="right-panel">
-        <h2>Welcome Back!</h2>
-        <p>Enter your credentials to access your account.</p>
+        <h2>Reset Password</h2>
+        <p>Enter the 6-digit code sent to your email address.</p>
 
         <!-- for messages sent from backend -->
         {% if messages %}
@@ -47,28 +47,19 @@
 
         <form method="POST">
             {% csrf_token %}
-            <label for="username">Username</label>
-            {{ form.username }}
-            {% if form.username.errors %}
-                {% for error in form.username.errors %}
+
+            <label for="otp">Verification Code</label>
+            {{ form.otp }}
+            {% if form.otp.errors %}
+                {% for error in form.otp.errors %}
                     <small class="error">* {{ error }}</small><br>
                 {% endfor %}
             {% endif %}
 
-            <label for="password">Password</label>
-            {{ form.password }}
-            {% if form.password.errors %}
-                {% for error in form.password.errors %}
-                    <small class="error">* {{ error }}</small><br>
-                {% endfor %}
-            {% endif %}
-
-            <div class="forgot"><a href="{% url 'request_reset' %}">Forgot Password?</a></div>
-
-            <button type="submit">Login</button>
+            <button type="submit">Reset Password</button>
 
             <div class="signup-login">
-                Don't have an account? <a href="{% url 'signup' %}">Sign up</a>
+               Didn't receive it? <a href="#">Resend OTP</a>
             </div>
         </form>
     </div>

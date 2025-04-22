@@ -9,4 +9,8 @@ urlpatterns = [
     path("home/", views.home, name="home_alt"),
     path("accounts/", include("django.contrib.auth.urls")),
     path("signup/", views.authView, name="signup"),
+
+    path("request-reset/", views.request_reset, name="request_reset"),
+    path("verify-otp/", views.verify_otp, name="verify_otp"),
+    path("set-new-password/", views.set_new_password, name="set_new_password"),
 ] + static(settings.STATIC_URL)
