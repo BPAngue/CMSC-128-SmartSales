@@ -1,14 +1,99 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="shadow-wrap">
-    <div class="form-wrap">
-        <h3>Signup </h3>
+<div class="login-signup-container">
+    <div class="left-panel">
+        <div>
+            <div class="logo">logo</div>
+            <div class="branding">
+                SmartSales<br>
+                <small>Daily Sales Tracking and Forecasting</small>
+            </div>
+        </div>
+
+        <div class="quote">"Lorem Ipsum Dolor"</div>
+        <div class="description">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+        </div>
+
+        <div class="icon-box">
+            <div class="icon">icon</div>
+            <div class="description">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+            </div>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <h2>Get Started!</h2>
+        <p>Enter account information to sign up.</p>
+
+        <!-- for messages sent from backend -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- for non field errors -->
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+            {% for error in form.non_field_errors %}
+                {{ error }}<br>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <form method="POST">
             {% csrf_token %}
-            {{ form }}
-            <button type="submit">Submit</button>
+
+            <label for="username">Username</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                {% for error in form.username.errors %}
+                    <small class="error">* {{ error }}</small><br>
+                {% endfor %}
+            {% endif %}
+
+            <label for="email">Email</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+                {% for error in form.email.errors %}
+                    <small class="error">* {{ error }}</small><br>
+                {% endfor %}
+            {% endif %}
+
+            <label for="password1">Password</label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}
+                {% for error in form.password1.errors %}
+                    <small class="error">* {{ error }}</small><br>
+                {% endfor %}
+            {% endif %}
+
+            <label for="password2">Confirm Password</label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+                {% for error in form.password2.errors %}
+                    <small class="error">* {{ error }}</small><br>
+                {% endfor %}
+            {% endif %}
+
+            <label for="business_name">Business Name</label>
+            {{ form.business_name }}
+            {% if form.business_name.errors %}
+                {% for error in form.business_name.errors %}
+                    <small class="error">* {{ error }}</small><br>
+                {% endfor %}
+            {% endif %}
+
+            <button type="submit">Sign up</button>
+
+            <div class="signup-login">
+                Already have an account? <a href="{% url 'login' %}">Login</a>
+            </div>
         </form>
-        <a class="signup-link" href="{% url 'login' %}">Login</a>
     </div>
 </div>
 {% endblock %}
