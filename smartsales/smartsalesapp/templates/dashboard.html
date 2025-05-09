@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SmartSales Dashboard</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/dashboardStyle.css' %}">
+</head>
+<body>
+    <header>
+        <div class="logo-section">
+            <div class="logo">Logo</div>
+            <div class="title">
+                <h1>SmartSales</h1>
+                <p>Daily Sales Tracking and Forecasting</p>
+            </div>
+        </div>
+        <div class="profile-section">
+            <span>{{ user.username }}</span>
+            <a href="{% url 'login' %}" class="logout">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <aside>
+            <nav>
+                <a href="#">🏠 Dashboard</a>
+                <a href="{% url 'products' %}">📦 Products</a>
+                <a href="#">💰 Transactions</a>
+                <a href="#">📊 Analytics</a>
+                <a href="#">🔮 Forecast</a>
+            </nav>
+        </aside>
+
+        <main>
+            <section class="summary">
+                <h2>Summary</h2>
+                <div class="filter-controls">
+                    <select>
+                        <option>Monthly</option>
+                        <option>Weekly</option>
+                        <option>Daily</option>
+                    </select>
+                    <button class="filter-btn">Filter ⚙️</button>
+                </div>
+                <div class="summary-cards">
+                    <div class="card">This Month’s Sales</div>
+                    <div class="card">This Month’s Revenue</div>
+                    <div class="card">This Month’s Top 1 Item</div>
+                    <div class="card">Next Month’s Forecast Value</div>
+                    <div class="card">Forecast Accuracy</div>
+                </div>
+                <a href="{% url 'record_transaction' %}" class="record-btn">Record a New Transaction</a>
+            </section>
+
+            <section class="transactions">
+                <h2>Recent Transactions</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Product</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                        <tr>
+                            <td>{{ transaction.id }}</td>
+                            <td>{{ transaction.customer_name }}</td>
+                            <td>{{ transaction.product.name }}</td>
+                            <td>${{ transaction.total_amount }}</td>
+                            <td>{{ transaction.date_of_transaction }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">No recent transactions found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

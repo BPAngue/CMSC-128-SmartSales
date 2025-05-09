@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Transaction</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/transactionStyle.css' %}">
+    <script>
+        function updatePrice() {
+            const products = JSON.parse('{{ products_json|safe }}');
+            const selectedProductId = document.getElementById('product').value;
+            const priceField = document.getElementById('price');
+            const quantity = parseInt(document.getElementById('quantity').value) || 1;
+            const totalAmountField = document.getElementById('total_amount');
+
+            const selectedProduct = products.find(p => p.id == selectedProductId);
+            if (selectedProduct) {
+                priceField.value = selectedProduct.price;
+                totalAmountField.value = selectedProduct.price * quantity;
+            } else {
+                priceField.value = '';
+                totalAmountField.value = '';
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>New Transaction</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset>
+                <legend>Customer Information</legend>
+                <div class="form-group">
+                    <div>
+                        <label for="customer_name">Customer Name</label>
+                        <input type="text" id="customer_name" name="customer_name" required>
+                    </div>
+                    <div>
+                        <label for="customer_phone">Customer Phone Number</label>
+                        <input type="text" id="customer_phone" name="customer_phone"  pattern="^(09\d{9}|\+639\d{9})$" title="Enter a valid Philippine phone number (e.g., 09123456789 or +639123456789)">
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Product Details</legend>
+                <div class="form-group">
+                    <div>
+                        <label for="product">Product Name</label>
+                        <select id="product" name="product" onchange="updatePrice()" required>
+                            <option value="">Select Product</option>
+                            {% for product in products %}
+                                {% if product.stock > 0 %}
+                                    <option value="{{ product.id }}">{{ product.name }} (Stock: {{ product.stock }})</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="price">Product Price</label>
+                        <input type="text" id="price" name="price" readonly placeholder="Price Automatically appears here">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div>
+                        <label for="quantity">Quantity</label>
+                        <input type="number" id="quantity" name="quantity" value="1" min="1" onchange="updatePrice()" required>
+                    </div>
+                    <div>
+                        <label for="total_amount">Total Amount</label>
+                        <input type="text" id="total_amount" name="total_amount" readonly placeholder="Calculated amount">
+                    </div>
+                    <div>
+                        <label for="date_of_transaction">Date of Transaction</label>
+                        <input type="date" id="date_of_transaction" name="date_of_transaction" value="{{ today_date }}" required>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="button-group">
+                <a href="{% url 'home' %}" class="cancel-btn">CANCEL</a>
+                <button type="submit" class="save-btn">SAVE TRANSACTION</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function updatePrice() {
+            const products = JSON.parse('{{ products_json|safe }}');
+            const selectedProductId = document.getElementById('product').value;
+            const priceField = document.getElementById('price');
+            const quantityInput = document.getElementById('quantity');
+            const totalAmountField = document.getElementById('total_amount');
+
+            const selectedProduct = products.find(p => p.id == selectedProductId);
+
+            if (selectedProduct) {
+                priceField.value = selectedProduct.price;
+                quantityInput.max = selectedProduct.stock;
+            
+                // If the current quantity exceeds available stock, reset it
+                if (parseInt(quantityInput.value) > selectedProduct.stock) {
+                    quantityInput.value = selectedProduct.stock;
+                }
+                totalAmountField.value = selectedProduct.price * quantityInput.value;
+            } else {
+                priceField.value = '';
+                totalAmountField.value = '';
+                quantityInput.max = '';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updatePrice();
+            document.getElementById('quantity').addEventListener('input', updatePrice);
+        });
+    </script>
+</body>
+</html>

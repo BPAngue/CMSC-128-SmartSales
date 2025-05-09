@@ -1,0 +1,132 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 20px;
+    border-bottom: 1px solid #ccc;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    background: #ddd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    font-weight: bold;
+}
+
+.title h1 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.title p {
+    margin: 0;
+    font-size: 12px;
+    color: #555;
+}
+
+.profile-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logout {
+    font-weight: bold;
+    color: #000;
+    text-decoration: none;
+}
+
+.container {
+    display: flex;
+}
+
+aside {
+    width: 200px;
+    background: #fff;
+    border-right: 1px solid #ccc;
+    padding: 20px;
+}
+
+nav a {
+    display: block;
+    padding: 10px 0;
+    color: #000;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+main {
+    flex: 1;
+    padding: 20px;
+}
+
+.summary h2, .transactions h2 {
+    margin-top: 0;
+}
+
+.filter-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filter-controls select, .filter-controls .filter-btn {
+    padding: 5px 10px;
+}
+
+.summary-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.card {
+    border: 1px solid #000;
+    padding: 20px;
+    width: calc(33.333% - 30px);
+    text-align: center;
+    background: #fff;
+}
+
+.record-btn {
+    background: #000;
+    color: #fff;
+    padding: 15px;
+    width: 98%; /* Already present, keep this */
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 0 #6a0dad;
+    display: block; /* Add this to ensure it takes up full width */
+    text-align: center; /* Ensure text is centered */
+}
+
+.transactions table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.transactions th, .transactions td {
+    border: 1px solid #000;
+    padding: 10px;
+    text-align: center;
+}

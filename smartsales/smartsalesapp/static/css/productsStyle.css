@@ -1,0 +1,123 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+.products-container {
+    background: #fff;
+    padding: 30px;
+    max-width: 1000px;
+    margin: auto;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h2, h3 {
+    margin: 0 0 20px 0;
+}
+
+.inventory-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.filters select, .filters .filter-btn, .filters .back-btn {
+    padding: 8px 12px;
+    margin-left: 5px;
+}
+
+.back-btn {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.filter-btn {
+    background-color: #555;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background: #fff;
+}
+
+table th, table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+
+.status {
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: black;
+}
+
+.status.available {
+    background-color: #28a745;
+}
+
+.status.out {
+    background-color: #dc3545;
+}
+
+.status.no-info {
+    background-color: #6c757d;
+}
+
+.edit-btn, .delete-btn, .add-btn {
+    padding: 8px 12px;
+    border: none;
+    cursor: pointer;
+    margin: 2px;
+    text-align: center;
+}
+
+.edit-btn {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.add-btn {
+    background-color: #000;
+    color: #fff;
+    display: block;
+    width: 100%;
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+.table-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pagination {
+    text-align: center;
+}
+
+.pagination button {
+    padding: 8px 12px;
+    margin: 0 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.current-page {
+    font-weight: bold;
+    padding: 0 10px;
+}
