@@ -15,81 +15,44 @@ from django.contrib.auth import get_user_model
 from django.views.decorators.cache import never_cache
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
+from .utils import prepare_sales_dataframe, arima_forecast, growth_pct, get_date_range, calculate_sales_data
 import pandas as pd
-from statsmodels.tsa.arima.model import ARIMA
-import numpy as np
-from sklearn.metrics import mean_absolute_percentage_error
 import random
 import json
 
 @login_required
 def home(request):
     period = request.GET.get('period', 'monthly')
-    today = timezone.now().date()
+    actual_sales, top_product = calculate_sales_data(period)
 
-    if period == 'daily':
-        start_date = today
-        forecast_steps = 1
-    elif period == 'weekly':
-        start_date = today - timedelta(days=7)
-        forecast_steps = 7
-    else:  # monthly
-        start_date = today.replace(day=1)
-        forecast_steps = 30
-
+    start_date, _ = get_date_range(period)
     transactions_qs = Transaction.objects.filter(date_of_transaction__gte=start_date)
-    sales_data = transactions_qs.values('date_of_transaction').annotate(total_sales=Sum('total_amount')).order_by('date_of_transaction')
-    
-    df = pd.DataFrame(list(sales_data))
-    if df.empty:
-        context = {
-            'period': period,
-            'actual_sales': 0,
-            'forecast_sales': 0,
-            'model_accuracy': 0,
-            'top_product': {'name': 'N/A', 'total_sold': 0},
-            'confidence_level': 95,
-            'transactions': transactions_qs,
-        }
-        return render(request, 'dashboard.html', context)
+    df = prepare_sales_dataframe(transactions_qs)
 
-    df['date_of_transaction'] = pd.to_datetime(df['date_of_transaction'])
-    df.set_index('date_of_transaction', inplace=True)
-    df = df.asfreq('D').fillna(0)
+    forecasts = {}
+    accuracy = 0
 
-    train_size = int(len(df) * 0.8)
-    train, test = df.iloc[:train_size], df.iloc[train_size:]
+    if df is not None:
+        for p, steps in {'daily': 1, 'weekly': 7, 'monthly': 30}.items():
+            forecast_series, _, acc = arima_forecast(df['total_sales'], steps=steps)
+            forecasts[p] = forecast_series.sum()
+            accuracy = acc  # Use latest accuracy or compute separately if needed
 
-    try:
-        model = ARIMA(train['total_sales'], order=(1, 1, 1))
-        model_fit = model.fit()
-        forecast = model_fit.forecast(steps=forecast_steps)
-        forecast_sales = forecast.sum()
-        actual_sales = df['total_sales'].sum()
-        if len(test) > 0:
-            mape = mean_absolute_percentage_error(test['total_sales'], model_fit.predict(start=test.index[0], end=test.index[-1]))
-            model_accuracy = round((1 - mape) * 100, 2)
-        else:
-            model_accuracy = 100.0
-    except:
-        forecast_sales = 0
-        actual_sales = df['total_sales'].sum()
-        model_accuracy = 0
-
-    top_product_data = transactions_qs.values('product__name').annotate(total_sold=Sum('quantity')).order_by('-total_sold').first()
-    top_product = {
-        'name': top_product_data['product__name'] if top_product_data else 'N/A',
-        'total_sold': top_product_data['total_sold'] if top_product_data else 0
-    }
+        request.session['forecast_sales'] = forecasts
+        request.session['forecast_accuracy'] = float(accuracy)
+    else:
+        request.session['forecast_sales'] = {'daily': 0.0, 'weekly': 0.0, 'monthly': 0.0}
+        request.session['forecast_accuracy'] = 0.0
 
     context = {
         'period': period,
         'actual_sales': f"{actual_sales:,.2f}",
-        'forecast_sales': f"{forecast_sales:,.2f}",
-        'model_accuracy': model_accuracy,
+        'forecast_sales': f"{forecasts.get(period, 0):,.2f}",
+        'model_accuracy': accuracy,
         'top_product': top_product,
         'confidence_level': 95,
-        'transactions': transactions_qs.order_by('-date_of_transaction')[:5],  # Limit to latest 5
+        'transactions': transactions_qs.order_by('-date_of_transaction')[:5],
+        'insufficient_data': df is None or len(df) < 5,
     }
 
     return render(request, 'dashboard.html', context)
@@ -393,82 +356,48 @@ def transactions_list_view(request):
 
 @login_required
 def analytics_view(request):
+    period = request.GET.get('period', 'monthly')
     today = timezone.now().date()
-    start_of_week = today - timedelta(days=today.weekday())
-    start_of_last_week = start_of_week - timedelta(days=7)
-    start_of_month = today.replace(day=1)
-    start_of_last_month = (start_of_month - timedelta(days=1)).replace(day=1)
 
-    # Current Period Sales
-    daily_sales = Transaction.objects.filter(date_of_transaction=today).aggregate(total=Sum('total_amount'))['total'] or 0
-    weekly_sales = Transaction.objects.filter(date_of_transaction__gte=start_of_week).aggregate(total=Sum('total_amount'))['total'] or 0
-    monthly_sales = Transaction.objects.filter(date_of_transaction__gte=start_of_month).aggregate(total=Sum('total_amount'))['total'] or 0
+    # Current Period Data
+    daily_sales, _ = calculate_sales_data('daily')
+    weekly_sales, _ = calculate_sales_data('weekly')
+    monthly_sales, _ = calculate_sales_data('monthly')
 
-    # Previous Period Sales
+    # Previous Period Data for Growth Rate Calculation
     yesterday = today - timedelta(days=1)
+    last_week_start = today - timedelta(days=today.weekday() + 7)
+    last_month_start = (today.replace(day=1) - timedelta(days=1)).replace(day=1)
+
     yesterday_sales = Transaction.objects.filter(date_of_transaction=yesterday).aggregate(total=Sum('total_amount'))['total'] or 0
+    last_week_sales = Transaction.objects.filter(date_of_transaction__gte=last_week_start, date_of_transaction__lt=today - timedelta(days=today.weekday())).aggregate(total=Sum('total_amount'))['total'] or 0
+    last_month_sales = Transaction.objects.filter(date_of_transaction__gte=last_month_start, date_of_transaction__lt=today.replace(day=1)).aggregate(total=Sum('total_amount'))['total'] or 0
 
-    last_week_sales = Transaction.objects.filter(
-        date_of_transaction__gte=start_of_last_week,
-        date_of_transaction__lt=start_of_week
-    ).aggregate(total=Sum('total_amount'))['total'] or 0
+    daily_growth = growth_pct(daily_sales, yesterday_sales)
+    weekly_growth = growth_pct(weekly_sales, last_week_sales)
+    monthly_growth = growth_pct(monthly_sales, last_month_sales)
 
-    last_month_sales = Transaction.objects.filter(
-        date_of_transaction__gte=start_of_last_month,
-        date_of_transaction__lt=start_of_month
-    ).aggregate(total=Sum('total_amount'))['total'] or 0
-
-    # Growth Calculations
-    def calculate_growth(current, previous):
-        if previous > 0:
-            return round(((current - previous) / previous) * 100, 2)
-        return 0
-
-    daily_growth = calculate_growth(daily_sales, yesterday_sales)
-    weekly_growth = calculate_growth(weekly_sales, last_week_sales)
-    monthly_growth = calculate_growth(monthly_sales, last_month_sales)
-
-    # Revenue Data for Chart.js
-    def get_revenue_data(group_by):
-        if group_by == 'daily':
-            trunc = TruncDate('date_of_transaction')
-            range_days = 7
-        elif group_by == 'weekly':
-            trunc = TruncWeek('date_of_transaction')
-            range_days = 30
-        else:
-            trunc = TruncMonth('date_of_transaction')
-            range_days = 365
-
+    # Chart Data
+    def prepare_chart_data(trunc_func):
         trend = (Transaction.objects
-            .filter(date_of_transaction__gte=today - timedelta(days=range_days))
-            .annotate(period=trunc)
-            .values('period')
-            .annotate(total=Sum('total_amount'))
-            .order_by('period'))
-
+                 .annotate(period=trunc_func('date_of_transaction'))
+                 .values('period')
+                 .annotate(total=Sum('total_amount'))
+                 .order_by('period'))
         labels = [str(entry['period']) for entry in trend]
         data = [float(entry['total']) for entry in trend]
         return labels, data
 
-    daily_labels, daily_data = get_revenue_data('daily')
-    weekly_labels, weekly_data = get_revenue_data('weekly')
-    monthly_labels, monthly_data = get_revenue_data('monthly')
+    daily_labels, daily_data = prepare_chart_data(TruncDate)
+    weekly_labels, weekly_data = prepare_chart_data(TruncWeek)
+    monthly_labels, monthly_data = prepare_chart_data(TruncMonth)
 
-    # Top 5 Best Selling Products
-    period = request.GET.get('period', 'monthly')
-    if period == 'daily':
-        date_filter = today
-    elif period == 'weekly':
-        date_filter = start_of_week
-    else:
-        date_filter = start_of_month
-
-    top_products = (Transaction.objects
-        .filter(date_of_transaction__gte=date_filter)
-        .values('product__name')
-        .annotate(total_sold=Sum('quantity'))
-        .order_by('-total_sold')[:5])
+    start_date, _ = get_date_range(period)
+    top_products_qs = (Transaction.objects
+                       .filter(date_of_transaction__gte=start_date)
+                       .values('product__name')
+                       .annotate(total_sold=Sum('quantity'))
+                       .order_by('-total_sold')[:5])
 
     context = {
         'daily_sales': f"{daily_sales:,.2f}",
@@ -477,114 +406,60 @@ def analytics_view(request):
         'daily_growth': daily_growth,
         'weekly_growth': weekly_growth,
         'monthly_growth': monthly_growth,
-        'top_products': [{'name': p['product__name'], 'total_sold': p['total_sold']} for p in top_products],
-        'daily_labels': json.dumps(daily_labels),
-        'daily_data': json.dumps(daily_data),
-        'weekly_labels': json.dumps(weekly_labels),
-        'weekly_data': json.dumps(weekly_data),
-        'monthly_labels': json.dumps(monthly_labels),
-        'monthly_data': json.dumps(monthly_data),
+        'daily_labels': json.dumps(daily_labels, cls=DjangoJSONEncoder),
+        'daily_data': json.dumps(daily_data, cls=DjangoJSONEncoder),
+        'weekly_labels': json.dumps(weekly_labels, cls=DjangoJSONEncoder),
+        'weekly_data': json.dumps(weekly_data, cls=DjangoJSONEncoder),
+        'monthly_labels': json.dumps(monthly_labels, cls=DjangoJSONEncoder),
+        'monthly_data': json.dumps(monthly_data, cls=DjangoJSONEncoder),
         'period': period,
+        'top_products': [{'name': p['product__name'], 'total_sold': p['total_sold']} for p in top_products_qs],
+        'insufficient_data': False,
     }
 
     return render(request, 'analytics.html', context)
 
-import pandas as pd
-from statsmodels.tsa.arima.model import ARIMA
-from sklearn.metrics import mean_absolute_percentage_error
-from django.utils import timezone
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.db.models import Sum
-from .models import Transaction
-import json
-
 @login_required
 def forecast_view(request):
-    today = pd.Timestamp.now().normalize()  # Ensures compatibility with datetime64[ns]
+    forecasts = request.session.get('forecast_sales', {'daily': 0.0, 'weekly': 0.0, 'monthly': 0.0})
+    model_accuracy = request.session.get('forecast_accuracy', 0.0)
 
-    transactions = (Transaction.objects
-                    .values('date_of_transaction')
-                    .annotate(total=Sum('total_amount'))
-                    .order_by('date_of_transaction'))
+    today = timezone.now().date()
+    yesterday = today - timedelta(days=1)
+    last_week = today - timedelta(days=7)
+    last_month = today - timedelta(days=30)
 
-    if not transactions:
-        messages.warning(request, "Not enough data for forecasting.")
-        return redirect('dashboard')
+    # Get historical data for comparison
+    df = prepare_sales_dataframe(Transaction.objects.all())
+    actual_today = df['total_sales'].get(str(pd.Timestamp(today)), 0.0) if df is not None else 0.0
+    actual_yesterday = df['total_sales'].get(str(pd.Timestamp(yesterday)), 0.0) if df is not None else 0.0
+    actual_last_week = df['total_sales'].get(str(pd.Timestamp(last_week)), 0.0) if df is not None else 0.0
+    actual_last_month = df['total_sales'].get(str(pd.Timestamp(last_month)), 0.0) if df is not None else 0.0
 
-    df = pd.DataFrame(transactions)
-    df['date_of_transaction'] = pd.to_datetime(df['date_of_transaction'])
-    df.set_index('date_of_transaction', inplace=True)
+    # Growth Calculations
+    daily_growth = growth_pct(forecasts.get('daily', 0.0), actual_yesterday)
+    weekly_growth = growth_pct(forecasts.get('weekly', 0.0), actual_last_week)
+    monthly_growth = growth_pct(forecasts.get('monthly', 0.0), actual_last_month)
 
-    # Ensure 'total' is numeric and drop NaN values
-    df['total'] = pd.to_numeric(df['total'], errors='coerce')
-    series = df['total'].dropna()
-
-    if series.empty:
-        messages.warning(request, "Sales data is empty or invalid for forecasting.")
-        return redirect('dashboard')
-
-    split_index = int(len(series) * 0.8)
-    train, test = series.iloc[:split_index], series.iloc[split_index:]
-
-    try:
-        model = ARIMA(train, order=(1, 1, 1))
-        model_fit = model.fit()
-    except Exception as e:
-        messages.error(request, f"ARIMA model failed: {e}")
-        return redirect('dashboard')
-
-    forecast_steps = 30
-    forecast_result = model_fit.get_forecast(steps=forecast_steps)
-    forecast_mean = forecast_result.predicted_mean
-
-    forecast_dates = pd.date_range(start=series.index[-1] + pd.Timedelta(days=1), periods=forecast_steps)
-    forecast_df = pd.DataFrame({'date': forecast_dates, 'forecast': forecast_mean.values})
-
-    next_day_forecast = forecast_df.iloc[0]['forecast']
-    weekly_forecast = forecast_df.iloc[:7]['forecast'].sum()
-    monthly_forecast = forecast_df.iloc[:30]['forecast'].sum()
-
-    try:
-        mape = mean_absolute_percentage_error(test, model_fit.predict(start=test.index[0], end=test.index[-1]))
-        model_accuracy = round((1 - mape) * 100, 2)
-    except Exception:
-        model_accuracy = 0.0
-
-    confidence_level = 95.0
-
-    def calculate_growth(current, previous):
-        return round(((current - previous) / previous) * 100, 2) if previous > 0 else 0.0
-
-    yesterday = today - pd.Timedelta(days=1)
-    yesterday_sales = series[series.index == yesterday].sum()
-    last_week_sales = series[series.index >= today - pd.Timedelta(days=7)].sum()
-    last_month_sales = series[series.index >= today - pd.Timedelta(days=30)].sum()
-
-    daily_sales = series[series.index == today].sum()
-    weekly_sales = last_week_sales
-    monthly_sales = last_month_sales
-
-    daily_growth = calculate_growth(daily_sales, yesterday_sales)
-    weekly_growth = calculate_growth(weekly_sales, last_week_sales)
-    monthly_growth = calculate_growth(monthly_sales, last_month_sales)
+    # Prepare data for the chart (actual vs forecasted)
+    forecast_chart_data = json.dumps({
+        'day': [actual_yesterday, forecasts.get('daily', 0.0)],
+        'week': [actual_last_week, forecasts.get('weekly', 0.0)],
+        'month': [actual_last_month, forecasts.get('monthly', 0.0)],
+    }, cls=DjangoJSONEncoder)
 
     context = {
-        'next_day_forecast': f"{next_day_forecast:,.2f}",
-        'weekly_forecast': f"{weekly_forecast:,.2f}",
-        'monthly_forecast': f"{monthly_forecast:,.2f}",
+        'next_day_forecast': f"{forecasts.get('daily', 0.0):,.2f}",
+        'weekly_forecast': f"{forecasts.get('weekly', 0.0):,.2f}",
+        'monthly_forecast': f"{forecasts.get('monthly', 0.0):,.2f}",
         'daily_growth': daily_growth,
         'weekly_growth': weekly_growth,
         'monthly_growth': monthly_growth,
-        'confidence_level': confidence_level,
+        'confidence_level': 95,
         'model_accuracy': model_accuracy,
         'last_updated': timezone.now().strftime("%B %d, %Y %I:%M %p"),
-        'forecast_chart_data': json.dumps({
-            'day': [float(daily_sales), float(next_day_forecast)],
-            'week': [float(weekly_sales), float(weekly_forecast)],
-            'month': [float(monthly_sales), float(monthly_forecast)]
-        }),
+        'forecast_chart_data': forecast_chart_data,
+        'insufficient_data': all(value == 0 for value in forecasts.values()),
     }
 
     return render(request, 'forecast.html', context)

@@ -33,6 +33,11 @@
         </aside>
 
         <main>
+            {% if insufficient_data %}
+            <div class="alert alert-warning" role="alert">
+                <strong>Notice:</strong> Not enough data for accurate forecasting. Please add more transactions to improve forecast accuracy.
+            </div>
+            {% endif %}
              <section class="summary">
                 <h2>Summary</h2>
                 <form method="get">
