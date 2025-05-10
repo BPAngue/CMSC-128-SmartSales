@@ -20,4 +20,5 @@ urlpatterns = [
     path("edit-product/<int:product_id>/", views.edit_product_view, name="edit_product"),
     path("record_transaction/", views.add_transaction_view, name="record_transaction"),
     path("transactions/", views.transactions_list_view, name="transactions"),
+    path("analytics/", views.analytics_view, name="analytics"),
 ] + static(settings.STATIC_URL)

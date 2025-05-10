@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sales Analytics</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/analytics.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="analytics-container">
+        <h2>Sales Analytics Panel</h2>
+        <div class="summary-cards">
+            <div class="card">
+                <h3>Daily Sales</h3>
+                <p>${{ daily_sales }}</p>
+                <span>+{{ daily_growth }}% from yesterday</span>
+            </div>
+            <div class="card">
+                <h3>Weekly Sales</h3>
+                <p>${{ weekly_sales }}</p>
+                <span>+{{ weekly_growth }}% from last week</span>
+            </div>
+            <div class="card">
+                <h3>Monthly Sales</h3>
+                <p>${{ monthly_sales }}</p>
+                <span>+{{ monthly_growth }}% from last month</span>
+            </div>
+        </div>
+
+        <div class="analytics-content">
+            <div class="trend">
+                <h3>Revenue Trend</h3>
+                <div class="trend-controls">
+                    <label><input type="radio" name="trend" value="daily" onclick="updateChart('daily')" checked> Daily</label>
+                    <label><input type="radio" name="trend" value="weekly" onclick="updateChart('weekly')"> Weekly</label>
+                    <label><input type="radio" name="trend" value="monthly" onclick="updateChart('monthly')"> Monthly</label>
+                </div>
+                <div class="graph-area">
+                    <canvas id="revenueChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+            <div class="top-products">
+                <h3>Top 5 Best Selling Products</h3>
+                <form method="GET" class="filter-form">
+                    <select name="period">
+                        <option value="daily" {% if period == 'daily' %}selected{% endif %}>Daily</option>
+                        <option value="weekly" {% if period == 'weekly' %}selected{% endif %}>Weekly</option>
+                        <option value="monthly" {% if period == 'monthly' %}selected{% endif %}>Monthly</option>
+                    </select>
+                    <button type="submit" class="filter-btn">Filter ⚙️</button>
+                </form>
+                <ul class="product-list">
+                    {% for product in top_products %}
+                    <li>{{ product.name }} - {{ product.total_sold }} sold</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <a href="{% url 'dashboard' %}" class="back-btn">BACK</a>
+    </div>
+
+    <!-- Pass JSON Data Using Safe Script Tags -->
+    <script id="daily_labels" type="application/json">{{ daily_labels|safe }}</script>
+    <script id="daily_data" type="application/json">{{ daily_data|safe }}</script>
+    <script id="weekly_labels" type="application/json">{{ weekly_labels|safe }}</script>
+    <script id="weekly_data" type="application/json">{{ weekly_data|safe }}</script>
+    <script id="monthly_labels" type="application/json">{{ monthly_labels|safe }}</script>
+    <script id="monthly_data" type="application/json">{{ monthly_data|safe }}</script>
+
+    <!-- Include External JS -->
+    <script src="{% static 'js/analytics.js' %}"></script>
+</body>
+</html>

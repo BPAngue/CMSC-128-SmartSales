@@ -6,6 +6,9 @@ from django.contrib import messages
 from .models import PasswordResetCode
 from .models import Product
 from .models import Transaction
+from django.db.models import Sum
+from django.db.models.functions import TruncDate, TruncWeek, TruncMonth
+from datetime import timedelta
 from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
@@ -316,3 +319,101 @@ def transactions_list_view(request):
         'current_product': product_filter,
     }
     return render(request, 'transactions.html', context)
+
+@login_required
+def analytics_view(request):
+    today = timezone.now().date()
+    start_of_week = today - timedelta(days=today.weekday())
+    start_of_last_week = start_of_week - timedelta(days=7)
+    start_of_month = today.replace(day=1)
+    start_of_last_month = (start_of_month - timedelta(days=1)).replace(day=1)
+
+    # Current Period Sales
+    daily_sales = Transaction.objects.filter(date_of_transaction=today).aggregate(total=Sum('total_amount'))['total'] or 0
+    weekly_sales = Transaction.objects.filter(date_of_transaction__gte=start_of_week).aggregate(total=Sum('total_amount'))['total'] or 0
+    monthly_sales = Transaction.objects.filter(date_of_transaction__gte=start_of_month).aggregate(total=Sum('total_amount'))['total'] or 0
+
+    # Previous Period Sales
+    yesterday = today - timedelta(days=1)
+    yesterday_sales = Transaction.objects.filter(date_of_transaction=yesterday).aggregate(total=Sum('total_amount'))['total'] or 0
+
+    last_week_sales = Transaction.objects.filter(
+        date_of_transaction__gte=start_of_last_week,
+        date_of_transaction__lt=start_of_week
+    ).aggregate(total=Sum('total_amount'))['total'] or 0
+
+    last_month_sales = Transaction.objects.filter(
+        date_of_transaction__gte=start_of_last_month,
+        date_of_transaction__lt=start_of_month
+    ).aggregate(total=Sum('total_amount'))['total'] or 0
+
+    # Growth Calculations
+    def calculate_growth(current, previous):
+        if previous > 0:
+            return round(((current - previous) / previous) * 100, 2)
+        return 0
+
+    daily_growth = calculate_growth(daily_sales, yesterday_sales)
+    weekly_growth = calculate_growth(weekly_sales, last_week_sales)
+    monthly_growth = calculate_growth(monthly_sales, last_month_sales)
+
+    # Revenue Data for Chart.js
+    def get_revenue_data(group_by):
+        if group_by == 'daily':
+            trunc = TruncDate('date_of_transaction')
+            range_days = 7
+        elif group_by == 'weekly':
+            trunc = TruncWeek('date_of_transaction')
+            range_days = 30
+        else:
+            trunc = TruncMonth('date_of_transaction')
+            range_days = 365
+
+        trend = (Transaction.objects
+            .filter(date_of_transaction__gte=today - timedelta(days=range_days))
+            .annotate(period=trunc)
+            .values('period')
+            .annotate(total=Sum('total_amount'))
+            .order_by('period'))
+
+        labels = [str(entry['period']) for entry in trend]
+        data = [float(entry['total']) for entry in trend]
+        return labels, data
+
+    daily_labels, daily_data = get_revenue_data('daily')
+    weekly_labels, weekly_data = get_revenue_data('weekly')
+    monthly_labels, monthly_data = get_revenue_data('monthly')
+
+    # Top 5 Best Selling Products
+    period = request.GET.get('period', 'monthly')
+    if period == 'daily':
+        date_filter = today
+    elif period == 'weekly':
+        date_filter = start_of_week
+    else:
+        date_filter = start_of_month
+
+    top_products = (Transaction.objects
+        .filter(date_of_transaction__gte=date_filter)
+        .values('product__name')
+        .annotate(total_sold=Sum('quantity'))
+        .order_by('-total_sold')[:5])
+
+    context = {
+        'daily_sales': f"{daily_sales:,.2f}",
+        'weekly_sales': f"{weekly_sales:,.2f}",
+        'monthly_sales': f"{monthly_sales:,.2f}",
+        'daily_growth': daily_growth,
+        'weekly_growth': weekly_growth,
+        'monthly_growth': monthly_growth,
+        'top_products': [{'name': p['product__name'], 'total_sold': p['total_sold']} for p in top_products],
+        'daily_labels': json.dumps(daily_labels),
+        'daily_data': json.dumps(daily_data),
+        'weekly_labels': json.dumps(weekly_labels),
+        'weekly_data': json.dumps(weekly_data),
+        'monthly_labels': json.dumps(monthly_labels),
+        'monthly_data': json.dumps(monthly_data),
+        'period': period,
+    }
+
+    return render(request, 'analytics.html', context)
