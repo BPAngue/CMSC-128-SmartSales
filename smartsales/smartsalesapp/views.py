@@ -359,12 +359,12 @@ def analytics_view(request):
     period = request.GET.get('period', 'monthly')
     today = timezone.now().date()
 
-    # Current Period Data
+    # Current Period Sales Data
     daily_sales, _ = calculate_sales_data('daily')
     weekly_sales, _ = calculate_sales_data('weekly')
     monthly_sales, _ = calculate_sales_data('monthly')
 
-    # Previous Period Data for Growth Rate Calculation
+    # Previous Period Data for Growth Calculation
     yesterday = today - timedelta(days=1)
     last_week_start = today - timedelta(days=today.weekday() + 7)
     last_month_start = (today.replace(day=1) - timedelta(days=1)).replace(day=1)
@@ -377,7 +377,7 @@ def analytics_view(request):
     weekly_growth = growth_pct(weekly_sales, last_week_sales)
     monthly_growth = growth_pct(monthly_sales, last_month_sales)
 
-    # Chart Data
+    # Prepare Chart Data
     def prepare_chart_data(trunc_func):
         trend = (Transaction.objects
                  .annotate(period=trunc_func('date_of_transaction'))
@@ -392,9 +392,10 @@ def analytics_view(request):
     weekly_labels, weekly_data = prepare_chart_data(TruncWeek)
     monthly_labels, monthly_data = prepare_chart_data(TruncMonth)
 
-    start_date, _ = get_date_range(period)
+    # Properly Filter Top Products Based on Selected Period
+    start_date, end_date = get_date_range(period)
     top_products_qs = (Transaction.objects
-                       .filter(date_of_transaction__gte=start_date)
+                       .filter(date_of_transaction__range=[start_date, end_date])
                        .values('product__name')
                        .annotate(total_sold=Sum('quantity'))
                        .order_by('-total_sold')[:5])

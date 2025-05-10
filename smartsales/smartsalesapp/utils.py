@@ -51,20 +51,21 @@ def arima_forecast(series, steps: int = 30, order=(1, 1, 1)):
         model_fit = model.fit()
         forecast = model_fit.forecast(steps=steps)
 
-        if len(test) > 0 and (test != 0).any():
-            preds = model_fit.predict(start=test.index[0], end=test.index[-1])
+        # Compute accuracy only if test data is valid
+        if not test.empty and (test != 0).any():
+            preds = model_fit.forecast(steps=len(test))
             mape = mean_absolute_percentage_error(test, preds)
             accuracy = round(max(0.0, (1 - mape) * 100), 2)
         else:
-            accuracy = 100.0
+            accuracy = 100.0  # No test data to validate, assume perfect accuracy
 
         return forecast.astype(float), float(series.sum()), accuracy
 
     except Exception:
-        # If ARIMA fails, fallback to SMA
+        # Fallback: Simple Moving Average (SMA)
         fallback_value = series.mean() if not series.empty else 0.0
         forecast = pd.Series([fallback_value] * steps)
-        return forecast, float(series.sum()), 0.0  # Fallback accuracy is 0%
+        return forecast, float(series.sum()), 0.0  # If fallback, assume 0% accuracy
 
 def growth_pct(current: float, previous: float) -> float:
     return round(((current - previous) / previous) * 100, 2) if previous else 0.0
