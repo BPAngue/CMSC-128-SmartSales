@@ -33,42 +33,24 @@
         </aside>
 
         <main>
-            <section class="summary">
+             <section class="summary">
                 <h2>Summary</h2>
-                <div class="filter-controls">
-                    <form method="get" action="{% url 'dashboard' %}">
-                        <select name="period" onchange="this.form.submit()">
-                            <option value="monthly" {% if period == 'monthly' %}selected{% endif %}>Monthly</option>
-                            <option value="weekly" {% if period == 'weekly' %}selected{% endif %}>Weekly</option>
-                            <option value="daily" {% if period == 'daily' %}selected{% endif %}>Daily</option>
-                        </select>
-                    </form>
-                </div>
+                <form method="get">
+                    <select name="period" onchange="this.form.submit()">
+                        <option value="daily" {% if period == 'daily' %}selected{% endif %}>Daily</option>
+                        <option value="weekly" {% if period == 'weekly' %}selected{% endif %}>Weekly</option>
+                        <option value="monthly" {% if period == 'monthly' %}selected{% endif %}>Monthly</option>
+                    </select>
+                </form>
                 <div class="summary-cards">
-                    <div class="card">
-                        <h3>{{ period|capfirst }} Sales</h3>
-                        <p>${{ actual_sales }}</p>
-                    </div>
-                    <div class="card">
-                        <h3>{{ period|capfirst }} Forecast</h3>
-                        <p>${{ forecast_sales }}</p>
-                    </div>
-                    <div class="card">
-                        <h3>Top Product</h3>
-                        <p>{{ top_product.name }} ({{ top_product.total_sold }} sold)</p>
-                    </div>
-                    <div class="card">
-                        <h3>Forecast Accuracy</h3>
-                        <p>{{ model_accuracy }}%</p>
-                    </div>
-                    <div class="card">
-                        <h3>Confidence Level</h3>
-                        <p>95%</p>
-                    </div>
+                    <div class="card">{{ period|title }} Sales<br>${{ actual_sales }}</div>
+                    <div class="card">{{ period|title }} Forecast<br>${{ forecast_sales }}</div>
+                    <div class="card">Top Product<br>{{ top_product.name }} ({{ top_product.total_sold }} sold)</div>
+                    <div class="card">Forecast Accuracy<br>{{ model_accuracy }}%</div>
+                    <div class="card">Confidence Level<br>{{ confidence_level }}%</div>
                 </div>
                 <a href="{% url 'record_transaction' %}" class="record-btn">Record a New Transaction</a>
             </section>
-
             <section class="transactions">
                 <h2>Recent Transactions</h2>
                 <table>

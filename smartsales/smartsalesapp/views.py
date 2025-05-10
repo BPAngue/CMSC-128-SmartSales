@@ -24,65 +24,58 @@ import json
 
 @login_required
 def home(request):
-    # Get the period filter from GET parameters; default to 'monthly'
     period = request.GET.get('period', 'monthly')
-
-    # Determine the start date based on the selected period
     today = timezone.now().date()
+
     if period == 'daily':
         start_date = today
+        forecast_steps = 1
     elif period == 'weekly':
-        start_date = today - timezone.timedelta(days=7)
+        start_date = today - timedelta(days=7)
+        forecast_steps = 7
     else:  # monthly
         start_date = today.replace(day=1)
+        forecast_steps = 30
 
-    # Fetch transactions from the start date to today
-    transactions_qs = Transaction.objects.filter(date_of_transaction__gte=start_date).order_by('date_of_transaction')
-
-    # Aggregate total sales per day
+    transactions_qs = Transaction.objects.filter(date_of_transaction__gte=start_date)
     sales_data = transactions_qs.values('date_of_transaction').annotate(total_sales=Sum('total_amount')).order_by('date_of_transaction')
-
-    # Prepare data for ARIMA model
+    
     df = pd.DataFrame(list(sales_data))
     if df.empty:
-        # Handle case with no data
         context = {
             'period': period,
             'actual_sales': 0,
             'forecast_sales': 0,
             'model_accuracy': 0,
             'top_product': {'name': 'N/A', 'total_sold': 0},
+            'confidence_level': 95,
             'transactions': transactions_qs,
         }
         return render(request, 'dashboard.html', context)
 
     df['date_of_transaction'] = pd.to_datetime(df['date_of_transaction'])
     df.set_index('date_of_transaction', inplace=True)
-    df = df.asfreq('D').fillna(0)  # Ensure daily frequency
+    df = df.asfreq('D').fillna(0)
 
-    # Split data into training and testing sets
     train_size = int(len(df) * 0.8)
     train, test = df.iloc[:train_size], df.iloc[train_size:]
 
-    # Fit ARIMA model
     try:
         model = ARIMA(train['total_sales'], order=(1, 1, 1))
         model_fit = model.fit()
-        forecast_steps = len(test) if len(test) > 0 else 1
         forecast = model_fit.forecast(steps=forecast_steps)
         forecast_sales = forecast.sum()
         actual_sales = df['total_sales'].sum()
         if len(test) > 0:
-            mape = mean_absolute_percentage_error(test['total_sales'], forecast)
+            mape = mean_absolute_percentage_error(test['total_sales'], model_fit.predict(start=test.index[0], end=test.index[-1]))
             model_accuracy = round((1 - mape) * 100, 2)
         else:
-            model_accuracy = 100.0  # If no test data, assume perfect accuracy
-    except Exception as e:
+            model_accuracy = 100.0
+    except:
         forecast_sales = 0
         actual_sales = df['total_sales'].sum()
         model_accuracy = 0
 
-    # Get top-selling product
     top_product_data = transactions_qs.values('product__name').annotate(total_sold=Sum('quantity')).order_by('-total_sold').first()
     top_product = {
         'name': top_product_data['product__name'] if top_product_data else 'N/A',
@@ -95,7 +88,8 @@ def home(request):
         'forecast_sales': f"{forecast_sales:,.2f}",
         'model_accuracy': model_accuracy,
         'top_product': top_product,
-        'transactions': transactions_qs,
+        'confidence_level': 95,
+        'transactions': transactions_qs.order_by('-date_of_transaction')[:5],  # Limit to latest 5
     }
 
     return render(request, 'dashboard.html', context)
