@@ -32,7 +32,7 @@ class Product(models.Model):
     stock = models.PositiveIntegerField(default=0)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Available')
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    last_updated = models.DateField(auto_now=True)
+    last_updated = models.DateField(auto_now=True, null=True, blank=True) # change this back to only auto_now = true
 
     def __str__(self):
         return f"{self.id} - {self.name}"

@@ -15,11 +15,9 @@ urlpatterns = [
     path("set-new-password/", views.set_new_password, name="set_new_password"),
 
     path("products/", views.products_view, name="products"),
-
     path("add_product/", views.add_product_view, name="add_product"),
-
     path("delete-product/<int:product_id>/", views.delete_product_view, name="delete_product"),
-
     path("edit-product/<int:product_id>/", views.edit_product_view, name="edit_product"),
     path("record_transaction/", views.add_transaction_view, name="record_transaction"),
+    path("transactions/", views.transactions_list_view, name="transactions"),
 ] + static(settings.STATIC_URL)

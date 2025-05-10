@@ -270,6 +270,8 @@ def add_transaction_view(request):
 
         # Update product stock
         product.stock -= quantity
+        if product.stock == 0:
+            product.status = "Out of Stock"
         product.save()
 
         messages.success(request, "Transaction recorded successfully!")
@@ -286,3 +288,31 @@ def add_transaction_view(request):
 def recent_transactions_view(request):
     transactions = Transaction.objects.all().order_by('-date_of_transaction')[:10]  # Last 10 transactions
     return render(request, 'dashboard.html', {'transactions': transactions})
+
+@login_required
+def transactions_list_view(request):
+    # Filters from GET parameters
+    date_filter = request.GET.get('date', '')
+    product_filter = request.GET.get('product', '')
+
+    transactions = Transaction.objects.all().order_by('-date_of_transaction')
+    products = Product.objects.all()
+
+    # Apply filters if provided
+    if date_filter:
+        transactions = transactions.filter(date_of_transaction=date_filter)
+    if product_filter:
+        transactions = transactions.filter(product__name__icontains=product_filter)
+
+    # Pagination: 10 transactions per page
+    paginator = Paginator(transactions, 10)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'transactions': page_obj,
+        'products': products,
+        'current_date': date_filter,
+        'current_product': product_filter,
+    }
+    return render(request, 'transactions.html', context)

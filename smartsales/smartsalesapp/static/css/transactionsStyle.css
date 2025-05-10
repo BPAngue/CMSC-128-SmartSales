@@ -1,0 +1,54 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f9f9f9;
+    margin: 0;
+    padding: 20px;
+}
+
+.transactions-container {
+    background: #fff;
+    padding: 20px;
+    border: 2px solid #333;
+    max-width: 800px;
+    margin: auto;
+}
+
+h2, h3 {
+    text-align: center;
+}
+
+.filters {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.filters select, .filters input, .filters button, .filters a {
+    padding: 5px 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+
+table, th, td {
+    border: 1px solid #000;
+}
+
+th, td {
+    text-align: center;
+    padding: 8px;
+}
+
+.footer, .pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.archive-view-btn {
+    font-weight: bold;
+}

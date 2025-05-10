@@ -4,6 +4,7 @@ from .models import CustomUser
 from .models import Product
 from .models import Transaction
 from django.contrib.auth.password_validation import validate_password
+import re
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
@@ -56,21 +57,29 @@ class PasswordResetForm(forms.Form):
 class TransactionForm(forms.ModelForm):
     class Meta:
         model = Transaction
-        fields = ['customer_name', 'product', 'quantity']
+        fields = ['customer_name', 'customer_phone', 'product', 'quantity']
 
     def __init__(self, *args, **kwargs):
         super(TransactionForm, self).__init__(*args, **kwargs)
-        # Only show products that have stock available
         self.fields['product'].queryset = Product.objects.filter(stock__gt=0)
+
+    def clean_customer_phone(self):
+        phone = self.cleaned_data.get('customer_phone')
+        if phone:
+            # Validate PH phone formats: 09XXXXXXXXX or +639XXXXXXXXX
+            if not re.match(r'^(09\d{9}|\+639\d{9})$', phone):
+                raise forms.ValidationError(
+                    "Enter a valid Philippine phone number (e.g., 09123456789 or +639123456789)."
+                )
+        return phone
 
     def clean(self):
         cleaned_data = super().clean()
         product = cleaned_data.get('product')
         quantity = cleaned_data.get('quantity')
 
-        if product and quantity:
-            if product.stock < quantity:
-                raise forms.ValidationError(
-                    f"Insufficient stock for {product.name}. Only {product.stock} left."
-                )
-        return cleaned_data
+        if product and quantity and product.stock < quantity:
+            raise forms.ValidationError(
+                f"Insufficient stock for {product.name}. Only {product.stock} left."
+            )
+        return cleaned_data 

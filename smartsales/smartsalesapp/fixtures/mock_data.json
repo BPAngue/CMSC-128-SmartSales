@@ -1,0 +1,752 @@
+[
+    {
+        "model": "smartsalesapp.product",
+        "pk": 1,
+        "fields": {
+            "name": "Product 1",
+            "stock": 86,
+            "price": "4057.39",
+            "status": "Available"
+        }
+    },
+    {
+        "model": "smartsalesapp.product",
+        "pk": 2,
+        "fields": {
+            "name": "Product 2",
+            "stock": 263,
+            "price": "4269.47",
+            "status": "Available"
+        }
+    },
+    {
+        "model": "smartsalesapp.product",
+        "pk": 3,
+        "fields": {
+            "name": "Product 3",
+            "stock": 191,
+            "price": "4264.48",
+            "status": "Available"
+        }
+    },
+    {
+        "model": "smartsalesapp.product",
+        "pk": 4,
+        "fields": {
+            "name": "Product 4",
+            "stock": 233,
+            "price": "4640.73",
+            "status": "Available"
+        }
+    },
+    {
+        "model": "smartsalesapp.product",
+        "pk": 5,
+        "fields": {
+            "name": "Product 5",
+            "stock": 418,
+            "price": "3001.66",
+            "status": "Available"
+        }
+    },
+    {
+        "model": "smartsalesapp.product",
+        "pk": 6,
+        "fields": {
+            "name": "Product 6",
+            "stock": 482,
+            "price": "3009.09",
+            "status": "Available"
+        }
+    },
+    {
+        "model": "smartsalesapp.product",
+        "pk": 7,
+        "fields": {
+            "name": "Product 7",
+            "stock": 169,
+            "price": "2211.96",
+            "status": "Available"
+        }
+    },
+    {
+        "model": "smartsalesapp.product",
+        "pk": 8,
+        "fields": {
+            "name": "Product 8",
+            "stock": 388,
+            "price": "4379.31",
+            "status": "Available"
+        }
+    },
+    {
+        "model": "smartsalesapp.product",
+        "pk": 9,
+        "fields": {
+            "name": "Product 9",
+            "stock": 204,
+            "price": "2261.30",
+            "status": "Available"
+        }
+    },
+    {
+        "model": "smartsalesapp.product",
+        "pk": 10,
+        "fields": {
+            "name": "Product 10",
+            "stock": 417,
+            "price": "3904.45",
+            "status": "Available"
+        }
+    },
+    {
+        "model": "smartsalesapp.product",
+        "pk": 11,
+        "fields": {
+            "name": "Product 11",
+            "stock": 247,
+            "price": "2858.41",
+            "status": "Available"
+        }
+    },
+    {
+        "model": "smartsalesapp.product",
+        "pk": 12,
+        "fields": {
+            "name": "Product 12",
+            "stock": 422,
+            "price": "4623.53",
+            "status": "Available"
+        }
+    },
+    {
+        "model": "smartsalesapp.product",
+        "pk": 13,
+        "fields": {
+            "name": "Product 13",
+            "stock": 278,
+            "price": "4730.12",
+            "status": "Available"
+        }
+    },
+    {
+        "model": "smartsalesapp.product",
+        "pk": 14,
+        "fields": {
+            "name": "Product 14",
+            "stock": 205,
+            "price": "1322.71",
+            "status": "Available"
+        }
+    },
+    {
+        "model": "smartsalesapp.product",
+        "pk": 15,
+        "fields": {
+            "name": "Product 15",
+            "stock": 405,
+            "price": "4343.67",
+            "status": "Available"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 1,
+        "fields": {
+            "customer_name": "Customer 1",
+            "customer_phone": "09997784101",
+            "product": 5,
+            "quantity": 48,
+            "total_amount": "4566.59",
+            "date_of_transaction": "2025-05-26"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 2,
+        "fields": {
+            "customer_name": "Customer 2",
+            "customer_phone": "09273172426",
+            "product": 8,
+            "quantity": 86,
+            "total_amount": "4781.99",
+            "date_of_transaction": "2025-05-20"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 3,
+        "fields": {
+            "customer_name": "Customer 3",
+            "customer_phone": "09407031472",
+            "product": 14,
+            "quantity": 79,
+            "total_amount": "4093.61",
+            "date_of_transaction": "2025-05-24"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 4,
+        "fields": {
+            "customer_name": "Customer 4",
+            "customer_phone": "09186873511",
+            "product": 5,
+            "quantity": 73,
+            "total_amount": "346.91",
+            "date_of_transaction": "2025-05-26"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 5,
+        "fields": {
+            "customer_name": "Customer 5",
+            "customer_phone": "09495632500",
+            "product": 8,
+            "quantity": 30,
+            "total_amount": "2501.92",
+            "date_of_transaction": "2025-05-26"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 6,
+        "fields": {
+            "customer_name": "Customer 6",
+            "customer_phone": "09874930121",
+            "product": 12,
+            "quantity": 41,
+            "total_amount": "3180.38",
+            "date_of_transaction": "2025-05-22"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 7,
+        "fields": {
+            "customer_name": "Customer 7",
+            "customer_phone": "09943321839",
+            "product": 6,
+            "quantity": 85,
+            "total_amount": "2004.28",
+            "date_of_transaction": "2025-05-30"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 8,
+        "fields": {
+            "customer_name": "Customer 8",
+            "customer_phone": "09664570862",
+            "product": 4,
+            "quantity": 64,
+            "total_amount": "3130.36",
+            "date_of_transaction": "2025-05-23"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 9,
+        "fields": {
+            "customer_name": "Customer 9",
+            "customer_phone": "09985169673",
+            "product": 13,
+            "quantity": 49,
+            "total_amount": "1120.95",
+            "date_of_transaction": "2025-05-23"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 10,
+        "fields": {
+            "customer_name": "Customer 10",
+            "customer_phone": "09205530785",
+            "product": 3,
+            "quantity": 5,
+            "total_amount": "2810.22",
+            "date_of_transaction": "2025-05-21"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 11,
+        "fields": {
+            "customer_name": "Customer 11",
+            "customer_phone": "09959920316",
+            "product": 1,
+            "quantity": 98,
+            "total_amount": "4164.47",
+            "date_of_transaction": "2025-05-23"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 12,
+        "fields": {
+            "customer_name": "Customer 12",
+            "customer_phone": "09699971457",
+            "product": 13,
+            "quantity": 48,
+            "total_amount": "461.35",
+            "date_of_transaction": "2025-05-25"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 13,
+        "fields": {
+            "customer_name": "Customer 13",
+            "customer_phone": "09693235288",
+            "product": 13,
+            "quantity": 27,
+            "total_amount": "2838.87",
+            "date_of_transaction": "2025-05-22"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 14,
+        "fields": {
+            "customer_name": "Customer 14",
+            "customer_phone": "09322815932",
+            "product": 14,
+            "quantity": 48,
+            "total_amount": "2782.92",
+            "date_of_transaction": "2025-05-27"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 15,
+        "fields": {
+            "customer_name": "Customer 15",
+            "customer_phone": "09456017308",
+            "product": 8,
+            "quantity": 51,
+            "total_amount": "1118.14",
+            "date_of_transaction": "2025-05-20"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 16,
+        "fields": {
+            "customer_name": "Customer 16",
+            "customer_phone": "09369642099",
+            "product": 7,
+            "quantity": 20,
+            "total_amount": "526.00",
+            "date_of_transaction": "2025-04-29"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 17,
+        "fields": {
+            "customer_name": "Customer 17",
+            "customer_phone": "09660634018",
+            "product": 8,
+            "quantity": 23,
+            "total_amount": "1255.20",
+            "date_of_transaction": "2025-05-06"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 18,
+        "fields": {
+            "customer_name": "Customer 18",
+            "customer_phone": "09205494766",
+            "product": 1,
+            "quantity": 7,
+            "total_amount": "2058.19",
+            "date_of_transaction": "2025-04-22"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 19,
+        "fields": {
+            "customer_name": "Customer 19",
+            "customer_phone": "09310806509",
+            "product": 2,
+            "quantity": 30,
+            "total_amount": "1682.04",
+            "date_of_transaction": "2025-04-22"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 20,
+        "fields": {
+            "customer_name": "Customer 20",
+            "customer_phone": "09774318811",
+            "product": 12,
+            "quantity": 55,
+            "total_amount": "4722.60",
+            "date_of_transaction": "2025-04-29"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 21,
+        "fields": {
+            "customer_name": "Customer 21",
+            "customer_phone": "09955247418",
+            "product": 1,
+            "quantity": 66,
+            "total_amount": "3850.41",
+            "date_of_transaction": "2025-04-22"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 22,
+        "fields": {
+            "customer_name": "Customer 22",
+            "customer_phone": "09285757080",
+            "product": 13,
+            "quantity": 81,
+            "total_amount": "790.10",
+            "date_of_transaction": "2025-05-13"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 23,
+        "fields": {
+            "customer_name": "Customer 23",
+            "customer_phone": "09678040574",
+            "product": 9,
+            "quantity": 23,
+            "total_amount": "3982.01",
+            "date_of_transaction": "2025-04-22"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 24,
+        "fields": {
+            "customer_name": "Customer 24",
+            "customer_phone": "09101582877",
+            "product": 9,
+            "quantity": 87,
+            "total_amount": "3935.03",
+            "date_of_transaction": "2025-04-01"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 25,
+        "fields": {
+            "customer_name": "Customer 25",
+            "customer_phone": "09909584592",
+            "product": 4,
+            "quantity": 32,
+            "total_amount": "4870.28",
+            "date_of_transaction": "2025-05-20"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 26,
+        "fields": {
+            "customer_name": "Customer 26",
+            "customer_phone": "09533374899",
+            "product": 14,
+            "quantity": 47,
+            "total_amount": "3365.83",
+            "date_of_transaction": "2025-04-29"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 27,
+        "fields": {
+            "customer_name": "Customer 27",
+            "customer_phone": "09725247589",
+            "product": 10,
+            "quantity": 24,
+            "total_amount": "1152.99",
+            "date_of_transaction": "2025-04-08"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 28,
+        "fields": {
+            "customer_name": "Customer 28",
+            "customer_phone": "09623692573",
+            "product": 4,
+            "quantity": 6,
+            "total_amount": "4013.50",
+            "date_of_transaction": "2025-04-08"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 29,
+        "fields": {
+            "customer_name": "Customer 29",
+            "customer_phone": "09617013111",
+            "product": 9,
+            "quantity": 86,
+            "total_amount": "4083.16",
+            "date_of_transaction": "2025-04-08"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 30,
+        "fields": {
+            "customer_name": "Customer 30",
+            "customer_phone": "09388117719",
+            "product": 7,
+            "quantity": 88,
+            "total_amount": "4846.89",
+            "date_of_transaction": "2025-04-01"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 31,
+        "fields": {
+            "customer_name": "Customer 31",
+            "customer_phone": "09699023268",
+            "product": 7,
+            "quantity": 11,
+            "total_amount": "4295.76",
+            "date_of_transaction": "2025-04-01"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 32,
+        "fields": {
+            "customer_name": "Customer 32",
+            "customer_phone": "09352389965",
+            "product": 9,
+            "quantity": 89,
+            "total_amount": "4458.93",
+            "date_of_transaction": "2025-04-01"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 33,
+        "fields": {
+            "customer_name": "Customer 33",
+            "customer_phone": "09128932414",
+            "product": 12,
+            "quantity": 38,
+            "total_amount": "3979.06",
+            "date_of_transaction": "2025-05-27"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 34,
+        "fields": {
+            "customer_name": "Customer 34",
+            "customer_phone": "09406366534",
+            "product": 12,
+            "quantity": 67,
+            "total_amount": "3024.09",
+            "date_of_transaction": "2025-05-06"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 35,
+        "fields": {
+            "customer_name": "Customer 35",
+            "customer_phone": "09704054224",
+            "product": 5,
+            "quantity": 5,
+            "total_amount": "872.11",
+            "date_of_transaction": "2025-04-01"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 36,
+        "fields": {
+            "customer_name": "Customer 36",
+            "customer_phone": "09109599899",
+            "product": 10,
+            "quantity": 86,
+            "total_amount": "2344.04",
+            "date_of_transaction": "2025-04-05"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 37,
+        "fields": {
+            "customer_name": "Customer 37",
+            "customer_phone": "09107925905",
+            "product": 4,
+            "quantity": 55,
+            "total_amount": "152.53",
+            "date_of_transaction": "2025-04-18"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 38,
+        "fields": {
+            "customer_name": "Customer 38",
+            "customer_phone": "09762566760",
+            "product": 8,
+            "quantity": 97,
+            "total_amount": "899.59",
+            "date_of_transaction": "2025-04-12"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 39,
+        "fields": {
+            "customer_name": "Customer 39",
+            "customer_phone": "09239565251",
+            "product": 15,
+            "quantity": 66,
+            "total_amount": "3147.48",
+            "date_of_transaction": "2025-04-01"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 40,
+        "fields": {
+            "customer_name": "Customer 40",
+            "customer_phone": "09568720947",
+            "product": 12,
+            "quantity": 15,
+            "total_amount": "4994.30",
+            "date_of_transaction": "2025-04-21"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 41,
+        "fields": {
+            "customer_name": "Customer 41",
+            "customer_phone": "09695213557",
+            "product": 11,
+            "quantity": 87,
+            "total_amount": "1540.79",
+            "date_of_transaction": "2025-04-26"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 42,
+        "fields": {
+            "customer_name": "Customer 42",
+            "customer_phone": "09763776666",
+            "product": 7,
+            "quantity": 98,
+            "total_amount": "229.77",
+            "date_of_transaction": "2025-04-10"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 43,
+        "fields": {
+            "customer_name": "Customer 43",
+            "customer_phone": "09231499273",
+            "product": 5,
+            "quantity": 36,
+            "total_amount": "3680.98",
+            "date_of_transaction": "2025-04-29"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 44,
+        "fields": {
+            "customer_name": "Customer 44",
+            "customer_phone": "09344133038",
+            "product": 6,
+            "quantity": 85,
+            "total_amount": "2377.25",
+            "date_of_transaction": "2025-04-22"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 45,
+        "fields": {
+            "customer_name": "Customer 45",
+            "customer_phone": "09362488419",
+            "product": 9,
+            "quantity": 81,
+            "total_amount": "746.03",
+            "date_of_transaction": "2025-04-11"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 46,
+        "fields": {
+            "customer_name": "Customer 46",
+            "customer_phone": "09459099680",
+            "product": 13,
+            "quantity": 59,
+            "total_amount": "2503.30",
+            "date_of_transaction": "2025-04-14"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 47,
+        "fields": {
+            "customer_name": "Customer 47",
+            "customer_phone": "09418330929",
+            "product": 5,
+            "quantity": 38,
+            "total_amount": "2942.60",
+            "date_of_transaction": "2025-04-20"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 48,
+        "fields": {
+            "customer_name": "Customer 48",
+            "customer_phone": "09474551278",
+            "product": 5,
+            "quantity": 70,
+            "total_amount": "2849.41",
+            "date_of_transaction": "2025-04-03"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 49,
+        "fields": {
+            "customer_name": "Customer 49",
+            "customer_phone": "09244400526",
+            "product": 11,
+            "quantity": 53,
+            "total_amount": "3865.02",
+            "date_of_transaction": "2025-04-18"
+        }
+    },
+    {
+        "model": "smartsalesapp.transaction",
+        "pk": 50,
+        "fields": {
+            "customer_name": "Customer 50",
+            "customer_phone": "09862479900",
+            "product": 3,
+            "quantity": 26,
+            "total_amount": "1814.77",
+            "date_of_transaction": "2025-04-29"
+        }
+    }
+]

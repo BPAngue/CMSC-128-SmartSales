@@ -17,16 +17,16 @@
         </div>
         <div class="profile-section">
             <span>{{ user.username }}</span>
-            <a href="{% url 'login' %}" class="logout">Logout</a>
+            <a href="{% url 'logout' %}" class="logout">Logout</a>
         </div>
     </header>
 
     <div class="container">
         <aside>
             <nav>
-                <a href="#">🏠 Dashboard</a>
+                <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
                 <a href="{% url 'products' %}">📦 Products</a>
-                <a href="#">💰 Transactions</a>
+                <a href="{% url 'transactions' %}">💰 Transactions</a>
                 <a href="#">📊 Analytics</a>
                 <a href="#">🔮 Forecast</a>
             </nav>
