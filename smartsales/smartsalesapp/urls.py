@@ -21,4 +21,5 @@ urlpatterns = [
     path("record_transaction/", views.add_transaction_view, name="record_transaction"),
     path("transactions/", views.transactions_list_view, name="transactions"),
     path("analytics/", views.analytics_view, name="analytics"),
+    path("forecast/", views.forecast_view, name="forecast"),
 ] + static(settings.STATIC_URL)

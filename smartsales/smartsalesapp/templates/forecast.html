@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sales Forecast</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/forecast.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="forecast-container">
+        <h2>📈 Sales Forecast Panel</h2>
+
+        <div class="summary-cards">
+            <div class="card">
+                <h3>Next Day Forecast</h3>
+                <p>${{ next_day_forecast }}</p>
+                <span class="growth">+{{ daily_growth }}% vs Yesterday</span>
+            </div>
+            <div class="card">
+                <h3>Weekly Forecast</h3>
+                <p>${{ weekly_forecast }}</p>
+                <span class="growth">+{{ weekly_growth }}% vs Last Week</span>
+            </div>
+            <div class="card">
+                <h3>Monthly Forecast</h3>
+                <p>${{ monthly_forecast }}</p>
+                <span class="growth">+{{ monthly_growth }}% vs Last Month</span>
+            </div>
+        </div>
+
+        <div class="forecast-content">
+            <div class="graph-section">
+                <h3>Forecast Trend</h3>
+                <div class="trend-controls">
+                    <label><input type="radio" name="forecast" onclick="updateForecastChart('day')" checked> Next Day</label>
+                    <label><input type="radio" name="forecast" onclick="updateForecastChart('week')"> Next Week</label>
+                    <label><input type="radio" name="forecast" onclick="updateForecastChart('month')"> Next Month</label>
+                </div>
+                <canvas id="forecastChart" width="400" height="200"></canvas>
+            </div>
+
+            <div class="forecast-details">
+                <h3>Forecast Details</h3>
+                <div class="detail-card">📌 Confidence Level: {{ confidence_level }}%</div>
+                <div class="detail-card">✅ Model Accuracy: {{ model_accuracy }}%</div>
+                <div class="detail-card">⏰ Last Updated: {{ last_updated }}</div>
+            </div>
+        </div>
+
+        <a href="{% url 'dashboard' %}" class="back-btn">← BACK</a>
+    </div>
+
+    <script id="forecast-data" type="application/json">{{ forecast_chart_data|safe }}</script>
+    <script src="{% static 'js/forecast.js' %}"></script>
+</body>
+</html>
