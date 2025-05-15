@@ -71,7 +71,7 @@ CMSC-128-SmartSales/
 │   └── smartsalesapp
 │        ├── __pycache
 │        ├── fixtures
-│        │   ├── mock_data.json
+│        │   └── mock_data.json
 │        ├── migrations
 │        ├── static
 │        │   ├── (css and js files)
