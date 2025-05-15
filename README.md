@@ -67,9 +67,15 @@ Access the system at [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 ```
 CMSC-128-SmartSales/
 ├── smartsales/
-│   ├── manage.py
-│   ├── smartsales/
-│   └── smartsalesapp/
-├── mock_data.json  # (Place your mock data file here)
+│   ├── smartsales
+│   └── smartsalesapp
+│        ├── __pycache
+│        ├── fixtures
+│        │   ├── mock_data.json
+│        ├── migrations
+│        ├── static
+│        │   ├── (css and js files)
+│        └── templates
+│            └──(html files)
 └── README.md
 ```
