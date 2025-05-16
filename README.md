@@ -9,7 +9,7 @@ A Django-based sales management system designed for small businesses to record, 
 
 ### 1️⃣ **Clone the Repository**
 ```bash
-git clone <your-repository-link>
+git clone https://github.com/BPAngue/CMSC-128-SmartSales.git
 cd CMSC-128-SmartSales
 ```
 
